@@ -55,13 +55,13 @@ private:
 	struct Audio { std::string damageSound = {}, attackingSound = {}; };														// Audio component structure with sound names
 	struct Health {																												// Health structure
 		int currentHealth = DEFAULT_MAX_HEALTH, maxHealth = DEFAULT_MAX_HEALTH;													// Health values
-		Uint32 lastHealthChangeTime = STAT_CHANGE_COOLDOWN;																		// Last health change time
+		Uint64 lastHealthChangeTime = STAT_CHANGE_COOLDOWN;																		// Last health change time
 	};
 	struct HealthBar { SDL_Rect backgroundRect = {}, healthRect = {}; };														// Health bar structure
 	struct Collider { SDL_Rect rect = {}; };																					// Collider structure
-	struct Damage { int amount = DEFAULT_UNIT_DAMAGE; Uint32 lastDamageDealtTime = STAT_CHANGE_COOLDOWN; };						// Damage structure
+	struct Damage { int amount = DEFAULT_UNIT_DAMAGE; Uint64 lastDamageDealtTime = STAT_CHANGE_COOLDOWN; };						// Damage structure
 	struct Speed { float value = DEFAULT_UNIT_SPEED; };																			// Speed structure
-	struct Ammo { int currentAmmo = DEFAULT_AMMO, maxAmmo = DEFAULT_MAX_AMMO; Uint32 lastFireTime = STAT_CHANGE_COOLDOWN; };	// Ammo structure
+	struct Ammo { int currentAmmo = DEFAULT_AMMO, maxAmmo = DEFAULT_MAX_AMMO; Uint64 lastFireTime = STAT_CHANGE_COOLDOWN; };	// Ammo structure
 	struct Input { float x = {}, y = {}; };																						// Input structure
 	struct ScoreValue { int amount = {}; };																						// Score value structure
 	struct Component																											// Component storage struct
@@ -96,7 +96,7 @@ private:
 	std::vector<Tile> groundTiles;																								// A list of ground tiles
 	std::unordered_set<Entity> activeEntities;																					// currently active entities
 	std::unordered_set<Entity> entitiesToDestroy;																				// entities queued for destruction
-	Uint32 now = {};																											// Current time in milliseconds
+	Uint64 now = {};																											// Current time in milliseconds
 	Uint32 score = {};																											// Global score
 	Vector2f cameraPosition = {};																								// camera world position 
 	float cameraSmoothing = CAMERA_SMOOTHING_FACTOR;																			// camera smoothing factor
@@ -114,7 +114,7 @@ private:
 	void collisionSystem(Component& com, float deltaTime = deltaTime);															// Collision system
 	void aiSystem(Component& com, Entity playerEntity, float deltaTime = deltaTime);											// AI system
 	void changeEntityHealth(Entity entity, int amount);																			// Change entity health
-	void processCollisionEntities(Component& com, Entity primary, Entity other, Uint32 now);									// Process collision between two entities
+	void processCollisionEntities(Component& com, Entity primary, Entity other, Uint64 now);									// Process collision between two entities
 	void playAudio(const std::string& name, int volume = -1, int loops = 0, int channel = -1);									// Play audio
 	void handleDeath(Entity entity, Health& health);																			// Respawn entity
 	void deactivateProjectile(Entity proj);																						// deactivate projectile
