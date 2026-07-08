@@ -103,7 +103,7 @@ void MyEngineSystem::collisionSystem(Component& com, float deltaTime)
 		for (const auto& obstacle : obstacles) {																				// FOR EACH OBSTACLE
 			const Entity other = obstacle.first;																				// get other entity
 			const SDL_Rect& obstacleRect = obstacle.second;																		// get obstacle rect
-			if (SDL_HasIntersection(&rectX, &obstacleRect) == SDL_TRUE) {														// IF INTERSECTING
+			if (SDL_HasRectIntersection(&rectX, &obstacleRect) == true) {														// IF INTERSECTING
 				processCollisionEntities(com, entity, other, now);																// process collision
 				if (getEntityTag(entity) == EntityTag::PROJECTILE || getEntityTag(other) == EntityTag::PROJECTILE) continue;	// IF PROJECTILE, skip position adjustment
 				if (getEntityTag(entity) == EntityTag::ENDLEVEL || getEntityTag(other) == EntityTag::ENDLEVEL) continue;		// IF END LEVEL, skip position adjustment
@@ -120,7 +120,7 @@ void MyEngineSystem::collisionSystem(Component& com, float deltaTime)
 		for (const auto& obstacle : obstacles) {																				// FOR EACH OBSTACLE
 			const Entity other = obstacle.first;																				// get other entity
 			const SDL_Rect& obstacleRect = obstacle.second;																		// get obstacle rect
-			if (SDL_HasIntersection(&rectY, &obstacleRect) == SDL_TRUE) {														// IF INTERSECTING
+			if (SDL_HasRectIntersection(&rectY, &obstacleRect) == true) {														// IF INTERSECTING
 				processCollisionEntities(com, entity, other, now);																// process collision
 				if (getEntityTag(entity) == EntityTag::PROJECTILE || getEntityTag(other) == EntityTag::PROJECTILE) continue;	// IF PROJECTILE, skip position adjustment
 				if (getEntityTag(entity) == EntityTag::ENDLEVEL || getEntityTag(other) == EntityTag::ENDLEVEL) continue;		// IF END LEVEL, skip position adjustment
@@ -138,7 +138,7 @@ void MyEngineSystem::collisionSystem(Component& com, float deltaTime)
 	}
 }
 
-void MyEngineSystem::processCollisionEntities(Component& com, Entity primary, Entity other, Uint32 now)
+void MyEngineSystem::processCollisionEntities(Component& com, Entity primary, Entity other, Uint64 now)
 {
 	if ((getEntityTag(primary) == EntityTag::ENDLEVEL && getEntityTag(other) == EntityTag::PC)											// IF PRIMARY IS ENDLEVEL AND OTHER IS PC
 		|| (getEntityTag(other) == EntityTag::ENDLEVEL && getEntityTag(primary) == EntityTag::PC)) {									// OR VICE VERSA
@@ -349,7 +349,7 @@ void MyEngineSystem::render(std::shared_ptr<GraphicsEngine> gfx)
 		int posY = roundToInt(rendered.transform->position.y - cameraPosition.y);												// screen Y
 		SDL_Rect dst = { posX, posY, width, height };																			// destination rectangle
 		setEntityColliderRect(rendered.entity, rendered.transform->position.x, rendered.transform->position.y, width, height);	// set collider rect
-		SDL_RendererFlip flip = SDL_FLIP_NONE;																					// no flip
+		SDL_FlipMode flip = SDL_FLIP_NONE;																					// no flip
 		if (rendered.transform->flipH) flip = SDL_FLIP_HORIZONTAL;																// horizontal flip
 		double angle = {};																										// zero intialise angle
 		if (getEntityTag(rendered.entity) == EntityTag::PROJECTILE) {															// IF PROJECTILE
@@ -384,15 +384,15 @@ void MyEngineSystem::loadSprite(const std::string& name, const std::string& file
 	if (loadedSprites.count(name)) return;																	// IF SPRITE ALREADY LOADED, return
 	SDL_Texture* texture = ResourceManager::loadTexture(filename, transparent);								// load texture
 	if (!texture) return;																					// IF FAILED TO LOAD TEXTURE, return
-	int width = {}, height = {};																			// zero initialise width and height
-	SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);											// query texture 
+	float width = {}, height = {};																			// zero initialise width and height
+	SDL_GetTextureSize(texture, &width, &height);											// query texture
 	Sprite sprite;																							// create Sprite
 	sprite.texture = texture;																				// set texture
 	sprite.frameW = frameW;																					// set frame width
 	sprite.frameH = frameH;																					// set frame height
 	sprite.frameCount = frames;																				// set frame count
-	sprite.textureWidth = width;																			// set texture width to width which is queried
-	sprite.textureHeight = height;																			// set texture height to height which is queried
+	sprite.textureWidth = static_cast<int>(width);																			// set texture width to width which is queried
+	sprite.textureHeight = static_cast<int>(height);																			// set texture height to height which is queried
 	sprite.startFrame = startFrame;																			// set start frame
 	sprite.loop = loop;																						// set loop
 	sprite.scale = scale;																					// set scale
