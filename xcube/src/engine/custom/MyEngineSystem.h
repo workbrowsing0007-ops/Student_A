@@ -18,8 +18,9 @@ static constexpr size_t DEFAULT_PROJECTILES_PER_OWNER = { 50 };																	
 
 class MyEngineSystem {
 	friend class XCube2Engine;																									// Friend class declaration
-private:
-	MyEngineSystem();																											// Constructor
+public:
+	MyEngineSystem();
+private:																											// Constructor
 	using Entity = std::uint32_t;																								// Entity type
 	enum class EntityTag { Unknown = 0, PC, NPC, AMMO, HEALTH, PROJECTILE, ENDLEVEL };											// Entity tags
 	template<typename T>																										// Template for component map
